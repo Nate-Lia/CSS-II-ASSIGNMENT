@@ -1,6 +1,6 @@
 <template>
   <transition-group name="list">
-    <div class="grid mx-auto md:grid-cols-3 md:mt-24">
+    <div class="list-none grid mx-auto md:grid-cols-3 md:mt-24">
       <ShopItem
         class="list-none"
         v-for="item in results"
@@ -9,6 +9,7 @@
         :title="item.title"
         :price="item.price"
         :image="item.image"
+        @delete-item="deleteItem"
       ></ShopItem>
     </div>
   </transition-group>
@@ -16,9 +17,8 @@
 
 <script>
 import ShopItem from "@/components/ShopItem.vue";
-import Pagination from "@/components/Pagination.vue";
 export default {
-  components: { ShopItem, Pagination },
+  components: { ShopItem },
   data() {
     return {
       results: [],
@@ -49,9 +49,32 @@ export default {
             image: responseData[id].image,
           });
           this.results = results;
+          console.log(this.results);
         }
       } catch (error) {
         console.log(error);
+      }
+    },
+
+    async deleteItem(itemID) {
+      if (confirm("Do you want to delete this item?")) {
+        console.log(itemID + " " + this.results);
+        const identifiedItem = this.results.find((item) => item.id === itemID);
+        await fetch(
+          "https://keyboard-shop-6316e-default-rtdb.europe-west1.firebasedatabase.app/items/" +
+            identifiedItem.databaseID +
+            ".json",
+          {
+            method: "DELETE",
+          }
+        );
+        if (this.results.length == 1) {
+          this.results = [];
+        }
+
+        await this.getData();
+      } else {
+        alert("Cancel Clicked");
       }
     },
   },

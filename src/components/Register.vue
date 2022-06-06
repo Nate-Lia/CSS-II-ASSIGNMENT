@@ -208,7 +208,6 @@ export default {
             mobile: reponseData[id].mobile,
             email: responseData[id].email,
             password: responseData[id].password,
-            role: responseData[id].role,
           });
           this.results = results;
         }
@@ -246,7 +245,6 @@ export default {
               email: this.enteredEmail,
               mobile: this.enteredMobile,
               password: this.enteredPassword,
-              role: this.role,
             }),
           }
         );

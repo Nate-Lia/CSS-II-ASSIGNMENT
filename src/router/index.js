@@ -6,7 +6,7 @@ const routes = [
   {
     path: '/',
     name: 'main',
-    component: MainMenu
+    component: MainMenu,
   },
   {
     path: '/shop',
@@ -16,8 +16,13 @@ const routes = [
   {
     path: '/addproduct',
     name: 'addproduct',
-    component: () => import('../components/NewItem.vue')
-  }
+    component: () => import('../components/NewItem.vue'),
+  },
+  {
+    path: '/updateproduct',
+    name: 'updateproduct',
+    component: () => import('../components/UpdateItem.vue')
+  },
 ]
 
 const router = createRouter({
