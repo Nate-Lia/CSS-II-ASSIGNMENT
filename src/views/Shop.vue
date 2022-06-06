@@ -18,6 +18,7 @@
 <script>
 import ShopItem from "@/components/ShopItem.vue";
 export default {
+  emits: ["edit-values"],
   components: { ShopItem },
   data() {
     return {
@@ -49,7 +50,16 @@ export default {
             image: responseData[id].image,
           });
           this.results = results;
-          console.log(this.results);
+          console.log(responseData);
+
+          this.$emit(
+            "edit-values",
+            id,
+            responseData[id].title,
+            responseData[id].price,
+            responseData[id].image
+          );
+          console.log(id);
         }
       } catch (error) {
         console.log(error);
@@ -58,7 +68,6 @@ export default {
 
     async deleteItem(itemID) {
       if (confirm("Do you want to delete this item?")) {
-        console.log(itemID + " " + this.results);
         const identifiedItem = this.results.find((item) => item.id === itemID);
         await fetch(
           "https://keyboard-shop-6316e-default-rtdb.europe-west1.firebasedatabase.app/items/" +

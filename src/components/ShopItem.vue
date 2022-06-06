@@ -17,8 +17,8 @@
           class="
             block
             text-white
-            bg-red-700
-            hover:bg-red-800
+            bg-green-700
+            hover:bg-green-800
             focus:ring-4 focus:outline-none focus:ring-green-300
             font-medium
             rounded-lg
@@ -40,7 +40,7 @@
             text-white
             bg-red-700
             hover:bg-red-800
-            focus:ring-4 focus:outline-none focus:ring-blue-300
+            focus:ring-4 focus:outline-none focus:ring-red-300
             font-medium
             rounded-lg
             text-sm
@@ -62,11 +62,6 @@
 <script>
 export default {
   emits: ["delete-item"],
-  data() {
-    return {
-      selectedID: 1,
-    };
-  },
   props: {
     id: {
       type: Number,

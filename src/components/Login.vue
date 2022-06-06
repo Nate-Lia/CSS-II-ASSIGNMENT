@@ -6,7 +6,7 @@
       >
         <h1 class="text-3xl font-bold mb-6">Login</h1>
         <form
-          @submit.prevent="submitData"
+          @submit.prevent="loginUser"
           class="mb-4 md:flex-wrap md:justify-between"
         >
           <div class="flex flex-col mb-4 md:w-full">
@@ -72,6 +72,9 @@
 </template>
 
 <script>
+import { auth } from "../firebase";
+import { signInWithEmailAndPassword } from "firebase/auth";
+
 export default {
   name: "Login",
   data() {
@@ -108,24 +111,20 @@ export default {
       }
     },
 
-    async submitData() {
-      this.getData();
-      for (const result in this.results) {
-        const identifiedAccount = this.results.find(
-          (account) => account.id === this.results[result].id
-        );
-        if (
-          identifiedAccount.email == this.enteredEmail &&
-          identifiedAccount.password == this.enteredPassword
-        ) {
-          this.$router.push("/shop");
-        } else {
-          alert(
-            "Account does not exist. Check you have inputted the correct details"
-          );
-        }
-      }
-      this.$store.dispatch("setAuth", true);
+    loginUser() {
+      signInWithEmailAndPassword(this.enteredEmail, this.enteredPassword)
+        .then((data) => {
+          data.user
+            .updateProfile({
+              displayName: this.enteredFirstName,
+            })
+            .then(() => {
+              this.$router.replace({ name: "Shop" });
+            });
+        })
+        .catch((err) => {
+          this.error = err.message;
+        });
     },
   },
   mounted() {

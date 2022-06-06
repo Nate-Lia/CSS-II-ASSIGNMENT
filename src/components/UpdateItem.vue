@@ -17,8 +17,8 @@
       >
         <h1 class="text-3xl font-bold mb-6">Edit Data</h1>
         <form
-          @submit.prevent="editData"
           class="mb-4 md:flex-wrap md:justify-between"
+          @submit.prevent="editData"
         >
           <div class="flex flex-col mb-4 md:w-full">
             <label
@@ -112,14 +112,14 @@ export default {
   data() {
     return {
       itemName: "",
-      itemPrice: 0,
+      itemPrice: "",
       itemImage: "",
     };
   },
   methods: {
     async editData() {
       try {
-        await fetch(
+        let response = await fetch(
           "https://keyboard-shop-6316e-default-rtdb.europe-west1.firebasedatabase.app/items/" +
             this.editValueProp[0] +
             ".json",
@@ -129,12 +129,14 @@ export default {
               "Content-Type": "application/json",
             },
             body: JSON.stringify({
-              name: this.itemName,
+              title: this.itemName,
               price: this.itemPrice,
               image: this.itemImage,
             }),
           }
         );
+
+        console.log(response);
       } catch (error) {
         console.log(error);
       }

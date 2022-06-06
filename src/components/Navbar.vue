@@ -11,6 +11,7 @@
       rounded
       dark:bg-gray-800
     "
+    v-if="user"
   >
     <div class="container flex flex-wrap justify-between items-center mx-auto">
       <a href="/" class="flex items-center">
@@ -151,8 +152,36 @@
               >Add A Product</router-link
             >
           </li>
+          <li><button @click="userSignOut">Sign Out</button></li>
         </ul>
       </div>
     </div>
   </nav>
 </template>
+
+<script>
+import { mapGetters } from "vuex";
+import { getAuth } from "firebase/auth";
+export default {
+  computed: {
+    ...mapGetters({
+      user: "user",
+    }),
+  },
+  methods: {
+    userSignOut() {
+      const auth = getAuth();
+
+      auth.onAuthStateChanged((user) => {
+        if (user) {
+          this.$store.dispatch("fetchUser", user);
+        }
+      });
+
+      auth.signOut().then(() => {
+        this.$router.push("/");
+      });
+    },
+  },
+};
+</script>

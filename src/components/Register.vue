@@ -9,7 +9,7 @@
         Sign Up
       </h1>
       <Form
-        @submit="submitData"
+        @submit="createUser"
         class="mb-4 md:flex md:flex-wrap md:justify-between"
       >
         <div class="flex flex-col mb-4 md:w-1/2">
@@ -163,6 +163,7 @@
 <script>
 import { Form, Field, ErrorMessage } from "vee-validate";
 import * as yup from "yup";
+import { createUserWithEmailAndPassword, getAuth } from "firebase/auth";
 
 export default {
   name: "Register",
@@ -178,7 +179,6 @@ export default {
       enteredMobile: "",
       enteredEmail: "",
       enteredPassword: "",
-      role: "guest",
       results: [],
       nameRules: yup.string().required(),
       mobileRules: yup.string().required().min(8).max(8),
@@ -187,77 +187,29 @@ export default {
     };
   },
   methods: {
-    async getData() {
-      try {
-        const response = await fetch(
-          "https://keyboard-shop-6316e-default-rtdb.europe-west1.firebasedatabase.app/account.json",
-          {
-            method: "GET",
-          }
-        );
-        const responseData = await response.json();
-        if (!response.ok) {
-          console.log("Something went wrong");
-        }
-        const results = [];
-        for (const id in responseData) {
-          results.push({
-            id: id,
-            firstname: responseData[id].firstname,
-            lastname: responseData[id].lastname,
-            mobile: reponseData[id].mobile,
-            email: responseData[id].email,
-            password: responseData[id].password,
-          });
-          this.results = results;
-        }
-      } catch (error) {
-        console.log(error);
-      }
-    },
+    async createUser() {
+      const auth = getAuth();
 
-    async submitData() {
-      var emailMatch = false;
-      var passwordMatch = false;
-
-      this.getData();
-      for (const result in this.results) {
-        const identifiedAccount = this.results.find(
-          (account) => account.id === this.results[result].id
-        );
-        if (identifiedAccount.email == this.enteredEmail) {
-          emailMatch = true;
-          alert("Email already exists");
+      auth.onAuthStateChanged((user) => {
+        if (user) {
+          this.$store.dispatch("fetchUser", user);
         }
-      }
+      });
 
-      if (emailMatch === false && passwordMatch === false) {
-        const response = await fetch(
-          "https://keyboard-shop-6316e-default-rtdb.europe-west1.firebasedatabase.app/account.json",
-          {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify({
-              firstName: this.enteredFirstName,
-              lastName: this.enteredLastName,
-              email: this.enteredEmail,
-              mobile: this.enteredMobile,
-              password: this.enteredPassword,
-            }),
-          }
-        );
-        alert("Account is created");
-        this.$router.push("/shop");
-        if (!response.ok) {
-          console.log("something went wrong");
-        }
-      }
+      createUserWithEmailAndPassword(
+        auth,
+        this.enteredEmail,
+        this.enteredPassword
+      )
+        .then((data) => {
+          data.user;
+          this.$router.push("/shop");
+        })
+        .catch((err) => {
+          console.log(err.message);
+        });
     },
   },
-  mounted() {
-    this.getData();
-  },
+  mounted() {},
 };
 </script>

@@ -3,8 +3,12 @@
     <router-link to="/">Main</router-link> |
     <router-link to="/about">About</router-link>
   </nav> -->
-  <Navbar></Navbar>
-  <router-view v-slot="{ Component }">
+  <Navbar v-if="user.isLoggedIn"></Navbar>
+  <router-view
+    @edit-values="editValues"
+    :editValueProp="editItemValues"
+    v-slot="{ Component }"
+  >
     <transition name="slide-fade">
       <component :is="Component" />
     </transition>
@@ -13,8 +17,26 @@
 
 <script>
 import Navbar from "./components/Navbar.vue";
+import { mapGetters } from "vuex";
 export default {
   components: { Navbar },
+  data() {
+    return {
+      editItemValues: [],
+    };
+  },
+  methods: {
+    editValues(id, title, price, image) {
+      this.editItemValues = [];
+      this.editItemValues.push(id, title, price, image);
+      console.log(this.editItemValues);
+    },
+  },
+  computed: {
+    ...mapGetters({
+      user: "user",
+    }),
+  },
 };
 </script>
 
@@ -41,6 +63,7 @@ nav a {
 nav a.router-link-exact-active {
   color: #42b983;
 }
+
 .slide-fade-enter-active {
   transition: all 0.3s ease-out;
 }
